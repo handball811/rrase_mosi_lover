@@ -1,0 +1,4 @@
+/data
+*.o
+test
+.DS_Store
