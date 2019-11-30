@@ -18,7 +18,7 @@ int main()
 	int range_input[] = {0,5,10,12,13,16};
 	memcpy(input.range, range_input, sizeof(int)*6);
 
-	input.range_len = 5;
+	input.range_len = 6;
 
 	printf("%s\n", input.str);
 	return 0;
