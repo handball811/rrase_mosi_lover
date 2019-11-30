@@ -4,6 +4,7 @@
 typedef struct{
 	// 答えをそのまま...
 	char ans[400010];
+	int ans_len;
 }output_structure;
 
 #endif
