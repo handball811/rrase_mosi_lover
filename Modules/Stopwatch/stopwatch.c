@@ -158,7 +158,7 @@ void StopwatchShow(Stopwatch *watch)
 	printf("Time memory of '%s'\n", watch->name);
 
 	StopwatchLabel *label = &(watch->main_label);
-	printf("Total time :: real: %8.5lf // pro: %8.5lf // sys: %8.5lf \n", label->total_real_time, label->total_process_time, label->total_system_time);
+	printf("Total time :: real: %8.5lf[sec] // pro: %8.5lf[sec] // sys: %8.5lf[sec] \n", label->total_real_time, label->total_process_time, label->total_system_time);
 	printf("===============================================\n");
 	printf("\n");
 
@@ -169,7 +169,7 @@ void StopwatchShow(Stopwatch *watch)
 	{
 		printf("# [ %s ]\n", watch->sub_labels[i].name );
 		printf(
-			"Total time :: real: %8.5lf // pro: %8.5lf // sys: %8.5lf \n",
+			"Total time :: real: %8.5lf[sec] // pro: %8.5lf[sec] // sys: %8.5lf[sec] \n",
 			watch->sub_labels[i].total_real_time, 
 			watch->sub_labels[i].total_process_time, 
 			watch->sub_labels[i].total_system_time);
