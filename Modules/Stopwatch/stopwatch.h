@@ -39,15 +39,15 @@ StopwatchLabel *GenerateStopwatchLabel(Stopwatch*, char*);
 
 // 全体のスタート　ポーズ後もここから
 void StopwatchStart(Stopwatch*);
-void StopwatchLabelStart(Stopwatch*, StopwatchLabel*);
+void StopwatchLabelStart(StopwatchLabel*);
 
 // 計測時間の一時的な停止
 void StopwatchPause(Stopwatch*);
-void StopwatchLabelPause(Stopwatch*, StopwatchLabel*);
+void StopwatchLabelPause(StopwatchLabel*);
 
 // 計測の終了
 void StopwatchStop(Stopwatch*);
-void StopwatchLabelStop(Stopwatch*, StopwatchLabel*);
+void StopwatchLabelStop(StopwatchLabel*);
 
 // 計測結果の出力
 void StopwatchShow(Stopwatch*);
