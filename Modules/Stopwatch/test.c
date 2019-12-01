@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include "stopwatch.h"
 
-int main()
+
+void test1()
 {
 	int i,j;
 	// ストップヲッチの作成
@@ -57,7 +58,87 @@ int main()
 	//scanf("%d",&i);
 	StopwatchStop(sasakuna_watch);
 	StopwatchShow(sasakuna_watch);
+}
 
+void test2()
+{
+	int i,j;
+
+	Stopwatch *_watch = GenerateStopwatch("Timer");
+	StopwatchLabel *_label_gen  = GenerateStopwatchLabel(_watch, "Generator");
+	StopwatchLabel *_label_conf = GenerateStopwatchLabel(_watch, "Confirm");
+	StopwatchLabel *_label_pre  = GenerateStopwatchLabel(_watch, "Prediction");
+	StopwatchLabel *_label_ex   = GenerateStopwatchLabel(_watch, "Presenter");
+
+
+	StopwatchStart(_watch);
+
+	StopwatchLabelStart(_label_gen);
+	for(i=0;i<1000000000;++i)
+	{
+		//10^9
+		j++;
+	}
+	StopwatchLabelStop(_label_gen);
+
+	StopwatchLabelStart(_label_conf);
+	for(i=0;i<1000000000;++i)
+	{
+		//10^9
+		j++;
+	}
+	StopwatchLabelStop(_label_conf);
+
+	StopwatchLabelStart(_label_pre);
+	for(i=0;i<1000000000;++i)
+	{
+		//10^9
+		j++;
+	}
+	StopwatchLabelStop(_label_pre);
+
+	StopwatchLabelStart(_label_ex);
+	for(i=0;i<1000000000;++i)
+	{
+		//10^9
+		j++;
+	}
+	StopwatchLabelStop(_label_ex);
+
+	StopwatchStop(_watch);
+
+	StopwatchShow(_watch);
+	/*
+出力結果のサンプル
+###############################################
+Time memory of 'Timer'
+Total time :: real:  9.53026 // pro:  9.36566 // sys:  0.02955 
+===============================================
+
+-----------------------------------------------
+# [ Generator ]
+Total time :: real:  2.44081 // pro:  2.35684 // sys:  0.01166 
+-----------------------------------------------
+# [ Confirm ]
+Total time :: real:  2.36553 // pro:  2.33389 // sys:  0.00630 
+-----------------------------------------------
+# [ Prediction ]
+Total time :: real:  2.36104 // pro:  2.33873 // sys:  0.00533 
+-----------------------------------------------
+# [ Presenter ]
+Total time :: real:  2.36287 // pro:  2.33619 // sys:  0.00624 
+-----------------------------------------------
+
+###############################################
+
+	*/
+	return;
+}
+
+int main()
+{
+	// test1();
+	test2();
 	return 0;
 }
 

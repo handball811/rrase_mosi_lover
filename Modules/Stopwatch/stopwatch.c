@@ -57,7 +57,7 @@ StopwatchLabel *GenerateStopwatchLabel(Stopwatch *watch, char *name)
 	strcpy(watch->sub_labels[label_len].name, name);
 	watch->sub_labels[label_len].status = STOP;
 
-	return &watch->sub_labels[label_len++];
+	return &watch->sub_labels[watch->sub_label_size++];
 }
 
 // main label が対象
@@ -65,6 +65,38 @@ void StopwatchStart(Stopwatch *watch)
 {
 	// もし前回の動作が停止なら、合計時間は0にする。
 	StopwatchLabel *label = &(watch->main_label);
+	StopwatchLabelStart(label);
+	//スタートする時に全部スタートさせちゃうと意味がないので,むしろストップする
+
+	int i;
+	for(i=0;i < watch->sub_label_size; ++i)
+	{
+		StopwatchLabelStop(&watch->sub_labels[i]);
+	}
+}
+
+void StopwatchPause(Stopwatch *watch)
+{
+	// もし前回の動作が停止なら、合計時間は0にする。
+	StopwatchLabel *label = &(watch->main_label);
+	StopwatchLabelPause(label);
+	// Pauseの時は、全ての内容についても停止する？->復帰が面倒だからポーズはしない
+}
+
+void StopwatchStop(Stopwatch *watch)
+{
+	StopwatchLabel *label = &(watch->main_label);
+	StopwatchLabelStop(label);
+	// Stopの時全てのSubLabelも停止する
+	int i;
+	for(i=0;i < watch->sub_label_size; ++i)
+	{
+		StopwatchLabelStop(&watch->sub_labels[i]);
+	}
+}
+
+void StopwatchLabelStart(StopwatchLabel *label)
+{
 	switch(label->status)
 	{
 	case STOP:
@@ -83,13 +115,10 @@ void StopwatchStart(Stopwatch *watch)
 	label->status = START;
 }
 
-void StopwatchPause(Stopwatch *watch)
+void StopwatchLabelPause(StopwatchLabel *label)
 {
-	// もし前回の動作が停止なら、合計時間は0にする。
-	StopwatchLabel *label = &(watch->main_label);
 	if(label->status != START)
 		return;
-
 	// ここまでの時間を計上する。
 	struct rusage cur_time;
 	struct timespec spec_cur_time;
@@ -102,9 +131,8 @@ void StopwatchPause(Stopwatch *watch)
 	label->status = PAUSE;
 }
 
-void StopwatchStop(Stopwatch *watch)
+void StopwatchLabelStop(StopwatchLabel *label)
 {
-	StopwatchLabel *label = &(watch->main_label);
 	if(label->status != START)
 	{
 		label->status = STOP;
@@ -123,6 +151,7 @@ void StopwatchStop(Stopwatch *watch)
 	label->status = STOP;
 }
 
+
 void StopwatchShow(Stopwatch *watch)
 {
 	printf("###############################################\n");
@@ -130,9 +159,23 @@ void StopwatchShow(Stopwatch *watch)
 
 	StopwatchLabel *label = &(watch->main_label);
 	printf("Total time :: real: %8.5lf // pro: %8.5lf // sys: %8.5lf \n", label->total_real_time, label->total_process_time, label->total_system_time);
+	printf("===============================================\n");
+	printf("\n");
+
+	int i = 0;
+	int sub_size = watch->sub_label_size;
 	printf("-----------------------------------------------\n");
-	printf("// sub memory\n");
-	printf("// \n");
+	for(i=0;i < sub_size; ++i)
+	{
+		printf("# [ %s ]\n", watch->sub_labels[i].name );
+		printf(
+			"Total time :: real: %8.5lf // pro: %8.5lf // sys: %8.5lf \n",
+			watch->sub_labels[i].total_real_time, 
+			watch->sub_labels[i].total_process_time, 
+			watch->sub_labels[i].total_system_time);
+		printf("-----------------------------------------------\n");
+	}
+	printf("\n");
 	printf("###############################################\n");
 }
 
