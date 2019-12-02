@@ -1,5 +1,5 @@
 PROG = test
-OBJS = test.o
+OBJS = test.o judge_answer.o
 CC = gcc
 CFLAGS = -W -Wall -Wextra -Wconversion -Wshadow
 LDFLAGS = 
