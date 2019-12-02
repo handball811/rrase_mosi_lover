@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "judge_answer.h"
 #include "../../DataStructure/OutputStructure/output_v1.h"
+#include "judge_answer.h"
 
 void test1()
 {
@@ -14,8 +14,8 @@ void test1()
 	strcpy(rs.ans, r);
 	rs.ans_len = 8;
 
-	printf("%d\n",edit_distance(&ls, &rs));
-	assert(edit_distance(&ls, &rs) == 0);
+	printf("%d\n",get_edit_distance(&ls, &rs));
+	assert(get_edit_distance(&ls, &rs) == 0);
 	return;
 }
 
@@ -28,8 +28,8 @@ void test2()
 	ls.ans_len = 8;
 	strcpy(rs.ans, r);
 	rs.ans_len = 6;
-	printf("%d\n",edit_distance(&ls, &rs));
-	assert(edit_distance(&ls, &rs) == 2);
+	printf("%d\n",get_edit_distance(&ls, &rs));
+	assert(get_edit_distance(&ls, &rs) == 2);
 	return;
 }
 
