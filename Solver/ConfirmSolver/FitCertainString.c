@@ -1,6 +1,5 @@
-#include "input_v1.h"
-#include "middle_predict_v1.h"
 #include <string.h>
+#include "FitCertainString.h"
 
 middle_predict_structure FitCertainString(input_structure);
 
