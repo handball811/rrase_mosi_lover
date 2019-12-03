@@ -4,11 +4,11 @@
 typedef struct{
 	// 入力
 	char str[400010];
-	int  str_len;
+	int  strLen;
+	
 	// パーツ
-	char parts[400010];
-	int  range[400010];
-	int  range_len;
+	char **parts;
+	int  partsNum;
 
 }input_structure;
 
