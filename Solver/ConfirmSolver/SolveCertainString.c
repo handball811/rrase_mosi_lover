@@ -1,7 +1,5 @@
 #include <string.h>
-#include "FitCertainString.h"
-
-middle_predict_structure FitCertainString(input_structure);
+#include "SolveCertainString.h"
 
 // テスト用
 int main(){
@@ -14,11 +12,11 @@ int main(){
     memcpy(input.range, range_input, sizeof(int)*6);
     input.range_len = 6;
 
-    middle_predict_structure result = FitCertainString(input);
+    middle_predict_structure result = SolveCertainString(input);
     return 0;
 }
 
-middle_predict_structure FitCertainString(input_structure input){
+middle_predict_structure SolveCertainString(input_structure input){
     int minimumCharacterNum = 10;   // ここで当てはめる単語の最小の文字数
 
     // まず文字数でソート
