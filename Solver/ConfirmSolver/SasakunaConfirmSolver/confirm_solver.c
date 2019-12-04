@@ -36,7 +36,10 @@ void SCAppendWord(SCNode *head, char* str)
 		++head->conn_num;
 		SCNode child;
 		SCNodeInit(&child);
+		// 次のポイントを登録
 		head->next[top] = VectorPushBack(&SCNodes, &child);
+		// Return Pointerの設定
+		head->next[top]->parent = head;
 		SCNodeInit(head->next[top]);
 		SCAppendWord(head->next[top], &str[1]);
 	}
@@ -52,20 +55,36 @@ void SCInitializeNodes(char **strs, unsigned int str_len)
 	SCNodeInit(&root);
 	scnode_head = VectorPushBack(&SCNodes, &root);
 	unsigned int i;
+	// トライへの追加を行う
 	for(i=0;i<str_len; ++i)
 	{
 		printf("SCNode Appending: %s\n",*strs);
 		SCAppendWord(scnode_head, *strs);
 		++strs;
 	}
+	// サフィックス接続の構築
+	scnode_head->suffix = scnode_head;
+	for(i=0;i<4;++i)
+	{
+		if(scnode_head->next[i]==NULL)
+		{
+			scnode_head->next[i] = scnode_head;
+		}
+		else
+		{
+			scnode_head->next[i]->suffix = scnode_head;
+			//Queue求む
+		}
+	}
 }
 
-void SCDebugDisplay(SCNode *head, int depth)
+int SCDebugDisplay(SCNode *head, int depth, int show_tree)
 {
 	if(head->conn_num == 0)
-		return;
+		return 1;
 	int i = 0;
-	char top[32];
+	char top[128];
+	int ret = 0;
 	for(i=0;i<depth;++i)
 	{
 		top[i] = ' ';
@@ -75,11 +94,12 @@ void SCDebugDisplay(SCNode *head, int depth)
 	{
 		if(head->next[i] != NULL)
 		{
-			printf("%s%c\n", top, 'a'+i);
-			SCDebugDisplay(head->next[i], depth+1);
+			if(show_tree)
+				printf("%s%c\n", top, 'a'+i);
+			ret += SCDebugDisplay(head->next[i], depth+1, show_tree);
 		}
 	}
-	return;
+	return ret;
 }
 
 void SCDebugNodes(int show_tree)
@@ -90,7 +110,7 @@ void SCDebugNodes(int show_tree)
 	printf("Node Size: %d\n", VectorSize(&SCNodes));
 	printf("------------------------------------\n");
 	printf("(root)\n");
-	if(show_tree)
-		SCDebugDisplay(scnode_head, 1);
+	int ret = SCDebugDisplay(scnode_head, 1, show_tree);
+	printf("Leaf size: %d\n", ret);
 	printf("####################################\n");
 }
