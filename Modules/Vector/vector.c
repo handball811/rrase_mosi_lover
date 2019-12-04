@@ -13,7 +13,7 @@ vector GenerateVector(size_t item_size)
 	return vec;
 }
 
-void VectorPushBack(vector *vec, void* item)
+void* VectorPushBack(vector *vec, void* item)
 {
 	if(vec->size >= vec->max_size)
 	{
@@ -26,7 +26,8 @@ void VectorPushBack(vector *vec, void* item)
 		vec->memory = tmp;
 		vec->max_size <<= 1;
 	}
-	memcpy(vec->memory+(vec->size++ * vec->item_size), item, vec->item_size);
+	memcpy(vec->memory+(vec->size * vec->item_size), item, vec->item_size);
+	return vec->memory+(vec->size++ * vec->item_size);
 }
 
 void VectorPopBack(vector *vec)
