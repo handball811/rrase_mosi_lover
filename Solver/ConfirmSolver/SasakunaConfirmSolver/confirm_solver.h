@@ -14,5 +14,6 @@ typedef struct sasakuna_confirm_node{
 	sasakuna_confirm_node *suffix;
 } SCNode;
 
-
+void SCInitializeNodes(char**, unsigned int);
+void SCDebugNodes();
 #endif
