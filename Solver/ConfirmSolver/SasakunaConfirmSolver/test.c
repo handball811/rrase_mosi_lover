@@ -9,10 +9,29 @@
 
 int main()
 {
-	char filename[] = "../../../Generator/dat0_in";
+	//char filename[] = "../../../Generator/dat0_in";
+	char filename[] = "../../../../data/dat1_in";
 	input_structure inp = GetStructureFromFile(filename);
-	SCInitializeNodes(inp.parts, inp.partsNum);
+	
+	char *sample_parts[] = {
+		"abcdd",
+		"acb",
+		"abc",
+		"abccd",
+		"bcdda",
+		"bacbd",
+		"caacd",
+		"dbacc"
+	};
+	char *input_str = "abcxxxdbcabxcdba";
+	
+	SCInitializeNodes(inp.parts, (unsigned int)inp.partsNum);
+	//SCInitializeNodes(sample_parts, (unsigned int)8);
 	SCDebugNodes(0);
+	SCMatch(inp.str);
+	//SCMatch(input_str);
+	SCDebugNodes(1);
 	printf("Init done \n");
+	SCFree();
 	return 0;
 }

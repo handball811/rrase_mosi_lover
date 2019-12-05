@@ -12,10 +12,14 @@ typedef struct sasakuna_confirm_node{
 	struct sasakuna_confirm_node *parent;
 	//サフィックスノードの接続先
 	struct sasakuna_confirm_node *suffix;
+	// これまでに何回来たかを表す
+	unsigned int arrived;
 } SCNode;
 
 
 
 void SCInitializeNodes(char**, unsigned int);
 void SCDebugNodes();
+void SCFree();
+void SCMatch();
 #endif
