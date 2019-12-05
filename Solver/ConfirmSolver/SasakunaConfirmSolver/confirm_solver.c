@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "confirm_solver.h"
 #include "../../../Modules/Vector/vector.h"
+#include "../../../Modules/Queue/queue.h"
 
 vector SCNodes;
 SCNode *scnode_head;
@@ -64,6 +65,7 @@ void SCInitializeNodes(char **strs, unsigned int str_len)
 	}
 	// サフィックス接続の構築
 	scnode_head->suffix = scnode_head;
+	queue q = GenerateQueue(sizeof(SCNode*));
 	for(i=0;i<4;++i)
 	{
 		if(scnode_head->next[i]==NULL)
@@ -73,7 +75,23 @@ void SCInitializeNodes(char **strs, unsigned int str_len)
 		else
 		{
 			scnode_head->next[i]->suffix = scnode_head;
-			//Queue求む
+			QueuePush(&q, &scnode_head->next[i]);
+		}
+	}
+	SCNode *now, *nxt;
+	while(!QueueEmpty(&q))
+	{
+		now = *((SCNode**)QueuePop(&q));
+		for(i=0;i<4;++i)
+		{
+			if(now->next[i] != NULL)
+			{
+				nxt = now->suffix;
+				while(nxt->next[i] == NULL)
+					nxt = nxt->suffix;
+				now->next[i]->suffix = nxt->next[i];
+				QueuePush(&q, &now->next[i]);
+			}
 		}
 	}
 }
