@@ -1,5 +1,6 @@
 #include <string.h>
 
+// 文字列スワップ
 void swapStr(char** a, char** b){
     char* tmp = *a;
     *a = *b;
