@@ -1,6 +1,26 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "SolveCertainString.h"
 #include "../../Generator/ReadDataFile.h"
+
+
+void CalculateCorrectAnswerRate(char* answer, int len){
+    FILE* fp = OpenFile("dat0_ref");
+    char *correctStr;
+    correctStr = (char*)malloc(sizeof(char)*(1+len));
+    fscanf( fp , "%s" , correctStr);
+
+    int correctNum = 0;
+    for(int i=0;i<len;i++){
+        if(answer[i] == correctStr[i]){
+            correctNum++;
+        }
+    }
+
+    printf("%d/%d\n", correctNum, len);
+    printf("%f\n", (double)correctNum/len*100);
+}
 
 int main(int argc, char const *argv[])
 {
@@ -10,7 +30,7 @@ int main(int argc, char const *argv[])
 
     GetStructureFromFile(fileName, &inputStructure);
     SolveCertainString(&inputStructure, &middleStructure);
-    printf("%s\n", middleStructure.str);
+    CalculateCorrectAnswerRate(middleStructure.str,middleStructure.str_len);
 
     return 0;
 }
