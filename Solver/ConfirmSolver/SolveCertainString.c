@@ -1,25 +1,33 @@
-#include <string.h>
 #include "SolveCertainString.h"
+#include <stdio.h>
+#include <string.h>
 
-// テスト用
-int main(){
-    input_structure input;
+// 部分文字列をソートする。
+void SortParts(input_structure* inputStructure){
+    int i, j;
+    char tmp[10000];
 
-    strcpy(input.str, "abcdabcdabcdxxxx");
-    input.str_len = 16;
-  	strcpy(input.parts, "abcdadcbaabcdabc");
-    int range_input[] = {0,5,10,12,13,16};
-    memcpy(input.range, range_input, sizeof(int)*6);
-    input.range_len = 6;
-
-    middle_predict_structure result = SolveCertainString(input);
-    return 0;
+    for(i = 0; i < inputStructure->partsNum-1; i++) {
+        for(j = i+1; j < inputStructure->partsNum; j++) {
+            if(strlen(inputStructure->parts[i]) < strlen(inputStructure->parts[j])) {
+                strcpy(tmp, inputStructure->parts[i]);
+                strcpy(inputStructure->parts[i], inputStructure->parts[j]);
+                strcpy(inputStructure->parts[j], tmp);
+            }
+        }
+    }
 }
 
-middle_predict_structure SolveCertainString(input_structure input){
-    int minimumCharacterNum = 10;   // ここで当てはめる単語の最小の文字数
 
-    // まず文字数でソート
+void SolveCertainString(input_structure* inputStructure) {
+    int minimumCharacterNum = 10; // ここで当てはめる単語の最小の文字数
+
+    SortParts(inputStructure);  //まず文字数でソート
+
+    printf("%s\n", inputStructure->parts[0]);
+    printf("%s\n", inputStructure->parts[1]);
+    printf("%s\n", inputStructure->parts[2]);
+    
 
     // queueに入れていく
 
@@ -29,6 +37,4 @@ middle_predict_structure SolveCertainString(input_structure input){
 
     // 1周の中で一度も当てはめる操作がなければ終了し、下流工程へ。
 
-    middle_predict_structure middle;
-    return middle;
 }
