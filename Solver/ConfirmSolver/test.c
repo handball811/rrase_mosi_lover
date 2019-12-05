@@ -4,7 +4,7 @@
 
 int main(int argc, char const *argv[])
 {
-    char fileName[] = "data.txt";
+    char fileName[] = "dat0_in";
     input_structure dataStructure;
     GetStructureFromFile(fileName, &dataStructure);
     SolveCertainString(&dataStructure);
