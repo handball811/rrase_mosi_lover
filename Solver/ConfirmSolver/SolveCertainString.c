@@ -72,13 +72,15 @@ void FitWords(input_structure *inputStructure, middle_predict_structure *middleS
                     insertNum++;
                 }
 
-                printf("%d\n", i);
+                //printf("%d\n", i);
             }
 
             // 一つも挿入出来なかったら終わり。　
             if(insertNum == 0)
                 break;
         }
+
+        printf("Phase%d Finished\n", phase);
     }
 
     // 最後にflg[i]==0の部分文字列をmiddleStructure->parts[]に加える。partsNumの更新も忘れずに。降順に出来れば理想だが、昇順でもいいかもね。
