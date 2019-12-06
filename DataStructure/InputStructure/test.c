@@ -4,21 +4,19 @@
 
 int main()
 {
-	//
 	input_structure input;
 	strcpy(input.str, "abcdabcdabcdxxxx");
-	input.str_len = 16;
-	/*
-	パーツが以下の時,,,
-	0   4 5   9   
-	abcda dcbaa bc d abc
-	の時,,,
-	*/
-	strcpy(input.parts, "abcdadcbaabcdabc");
-	int range_input[] = {0,5,10,12,13,16};
-	memcpy(input.range, range_input, sizeof(int)*6);
+	input.strLen = 16;
 
-	input.range_len = 6;
+	// メモリ確保
+	input.parts = (char **)malloc(sizeof(char *) * 2);
+	for(int i=0;i<2;i++){
+		input.parts[i] = (char *)malloc(sizeof(char) * 10);
+	}
+
+	input.parts[0] = "aabc";
+	input.parts[1] = "bcd";
+	input.partsNum = 2;
 
 	printf("%s\n", input.str);
 	return 0;
