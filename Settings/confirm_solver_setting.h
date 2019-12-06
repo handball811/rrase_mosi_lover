@@ -1,7 +1,10 @@
 #ifndef CONFIRM_SOLVER_SETTING
 #define CONFIRM_SOLVER_SETTING
 
-#define MINIMUM_CHARACTER_NUM_TO_FIT 6 // 当てはめる最小の文字数。
-#define FIT_MINIMUM_MATCH_NUM 4         // 何文字が完全に一致していたらそこに当てはまると確定させるか。例：abcxxdとabcdddは4文字完全一致なので当てはめる。
+// cファイルの方を見てください。そっちに設定も記述してください。
+extern int MINIMUM_CHARACTER_NUM_TO_FIT; 
+extern int PHASE_NUM;
+extern int MATCH_CHARACTER_NUM[]; 
+extern int FIT_MINIMUM_MATCH_NUM[];
 
 #endif

@@ -6,25 +6,29 @@
 
 
 void CalculateCorrectAnswerRate(char* answer, int len){
-    FILE* fp = OpenFile("dat0_ref");
+    FILE* fp = OpenFile("dat4_ref");
     char *correctStr;
     correctStr = (char*)malloc(sizeof(char)*(1+len));
     fscanf( fp , "%s" , correctStr);
 
     int correctNum = 0;
+    int xNum = 0;
     for(int i=0;i<len;i++){
         if(answer[i] == correctStr[i]){
             correctNum++;
+        }else if(answer[i]=='x'){
+            xNum++;
         }
     }
 
     printf("%d/%d\n", correctNum, len);
+    printf("x以外は%d\n", len- xNum);
     printf("%f\n", (double)correctNum/len*100);
 }
 
 int main(int argc, char const *argv[])
 {
-    char fileName[] = "dat0_in";
+    char fileName[] = "dat4_in";
     input_structure inputStructure;
     middle_predict_structure middleStructure;
 
