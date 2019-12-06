@@ -6,7 +6,7 @@
 
 
 void CalculateCorrectAnswerRate(char* answer, int len){
-    FILE* fp = OpenFile("dat4_ref");
+    FILE* fp = OpenFile("dat1_ref");
     char *correctStr;
     correctStr = (char*)malloc(sizeof(char)*(1+len));
     fscanf( fp , "%s" , correctStr);
@@ -28,7 +28,7 @@ void CalculateCorrectAnswerRate(char* answer, int len){
 
 int main(int argc, char const *argv[])
 {
-    char fileName[] = "dat4_in";
+    char fileName[] = "dat1_in";
     input_structure inputStructure;
     middle_predict_structure middleStructure;
 
