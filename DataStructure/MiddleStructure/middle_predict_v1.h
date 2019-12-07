@@ -9,8 +9,9 @@ typedef struct{
 	int unsettledPlace[400010];			// xの場所を示す。
 
 	// 残りのまだ当てはまってないパーツ
-	char **parts;		// まだ当てはまっていない部分文字列。
-	int  partsNum;		// 部分文字列の個数。
+	char*** parts;		// まだ当てはまっていない部分文字列。　例:parts[4][2] これは4文字の部分文字列の中で3番目のもの。
+	int* partsNum;		// 部分文字列の個数。	例:partsNum[4]　これは4文字の文字列がいくつあるか。
+	int maxPartsLen;	// 部分文字列の中で最も長い文字数
 }middle_predict_structure;
 
 #endif
