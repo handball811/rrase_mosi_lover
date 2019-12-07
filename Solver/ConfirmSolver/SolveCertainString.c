@@ -27,5 +27,5 @@ void SolveCertainString(input_structure *inputStructure, middle_predict_structur
     PushUnusedPartsToMiddleStructure(inputStructure, middleStructure, usedPartsFlg);    // 当てはまらなかった部分文字列をMiddleStructureに移動。
     UpdateUnsettledPlace(middleStructure);                                              // middleStructureのunsettledPlaceを更新する。
 
-    CalculateCorrectAnswerRate("dat1_ref", middleStructure->str, middleStructure->strLen);
+    CalculateCorrectAnswerRate("Data/dat1_ref", middleStructure->str, middleStructure->strLen);
 }
