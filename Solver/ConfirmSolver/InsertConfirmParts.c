@@ -48,7 +48,7 @@ void InsertConfirmParts(input_structure *inputStructure, middle_predict_structur
 
         for(int i = 0; i < inputStructure->partsNum; i++) {
             if(flg[i])
-                continue; // すでにその部分文字列が当てはまってた時かこのフェーズで当てはめる文字数以下のとき
+                continue; // すでにその部分文字列が当てはまってた時
 
             if(InsertWord1(middleStructure, inputStructure->parts[i], strlen(inputStructure->parts[i]))) { // 入れてみる
                 flg[i] = 1; // 入ったらフラグを立てる。

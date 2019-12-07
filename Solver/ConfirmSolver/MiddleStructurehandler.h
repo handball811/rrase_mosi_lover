@@ -10,4 +10,6 @@ void InitializeMiddleStructure(input_structure*, middle_predict_structure*);
 // まだ使われていない部分文字列をmiddleStructureに移す。
 void PushUnusedPartsToMiddleStructure(input_structure*, middle_predict_structure*, int*);
 
+void UpdateUnsettledPlace(middle_predict_structure*);
+
 #endif
