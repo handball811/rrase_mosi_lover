@@ -1,0 +1,2 @@
+ test : test.c
+	gcc test.c SolveCertainString.c sort.c MiddleStructureHandler.c InsertConfirmParts.c InsertPartsRoughly.c CalculateCorrectAnswerRate.c ../../Generator/ReadDataFile.c ../../Settings/confirm_solver_setting.c
