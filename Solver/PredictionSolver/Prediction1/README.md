@@ -1,0 +1,1 @@
+#Prediction Solverの前半のアルゴリズムです。
