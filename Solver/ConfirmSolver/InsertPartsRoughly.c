@@ -68,6 +68,6 @@ void InsertPartsRoughly(input_structure *inputStructure, middle_predict_structur
         }
 
         printf("Phase%d Finished\n", phase);
-        CalculateCorrectAnswerRate("Data/dat1_ref", middleStructure->str,middleStructure->strLen);
+        CalculateCorrectAnswerRate("Data/dat2_ref", middleStructure->str,middleStructure->strLen);
     }
 }

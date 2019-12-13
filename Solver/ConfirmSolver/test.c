@@ -4,7 +4,7 @@
 
 int main(int argc, char const *argv[])
 {
-    char fileName[] = "Data/dat1_in";
+    char fileName[] = "Data/dat2_in";
     input_structure inputStructure;
     middle_predict_structure middleStructure;
 
