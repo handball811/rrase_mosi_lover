@@ -23,6 +23,9 @@ void SolveCertainString(input_structure *inputStructure, middle_predict_structur
     SortInputStructureParts(inputStructure);   
     InitializeMiddleStructure(inputStructure, middleStructure);                         // inputStructureの中身を元にmiddleStructureを初期化する。
     InsertConfirmParts(inputStructure, middleStructure, usedPartsFlg);                  // まず確実に当てはまる部分文字列を当てはめる。
+
+    CalculateCorrectAnswerRate("Data/dat2_ref", middleStructure->str, middleStructure->strLen);
+
     InsertPartsRoughly(inputStructure, middleStructure, usedPartsFlg);                  // 残りは一致する文字数が大きいところに挿入。
     PushUnusedPartsToMiddleStructure(inputStructure, middleStructure, usedPartsFlg);    // 当てはまらなかった部分文字列をMiddleStructureに移動。
     UpdateUnsettledPlace(middleStructure);                                              // middleStructureのunsettledPlaceを更新する。
