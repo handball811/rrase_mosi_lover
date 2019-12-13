@@ -10,7 +10,7 @@ typedef struct {
 
 // 実体として保存していく
 vector GenerateVector();
-void VectorPushBack(vector *, void*);
+void* VectorPushBack(vector *, void*);
 void VectorPopBuck(vector *);
 void* VectorAt(vector*, unsigned int num);
 unsigned int VectorSize(vector*);
