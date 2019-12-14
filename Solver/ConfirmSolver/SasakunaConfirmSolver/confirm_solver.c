@@ -229,14 +229,13 @@ void SCMatch(char *str)
 	while('\0'!=(t=(unsigned int)str[str_pos]) && !QueueEmpty(&q))
 	{
 		cands = QueueSize(&q);
-		/*
-		if(str_pos%100000 == 0)
+		if(str_pos%1 == 0)
 		{
 			printf("***********************************\n");
 			printf("Index     : %d\n", str_pos);
 			printf("Next word : %c\n", t);
 			printf("Cand Size : %d\n", cands);
-		}*/
+		}
 		if(t == 'x')
 		{
 			for(i=0; i<cands; ++i)
@@ -349,23 +348,25 @@ void SCMatch(char *str)
 					next = pos->suffix;
 					while(next->next[t]==NULL && next != scnode_head)
 					{
+						/*
 						if(next->conn_num)
 						{
 							//ショートカットを作成
 							//printf("shortcut made\n");
 							shot->suffix = next;
 							shot = next;
-						}
+						}*/
 						next = next->suffix;
 						//printf("\tsuffix: %d\n", next->flag);
 					}
+					/*
 					if(next->conn_num)
 					{
 						//ショートカットを作成
 						//printf("shortcut made\n");
 						shot->suffix = next;
 						shot = next;
-					}
+					}*/
 					next = next->next[t];
 					//printf("\tsuffix: %d\n", next->flag);
 					flag = next->flag;
@@ -380,8 +381,7 @@ void SCMatch(char *str)
 				//printf("\tgoto : %d\n",flag);
 			}
 		}
-		/*
-		if(str_pos%100000 == 0)
+		if(str_pos%1 == 0)
 		{
 			SCDebugNodes(0);
 			// 今の位置とか諸々を交換
@@ -401,7 +401,7 @@ void SCMatch(char *str)
 			}
 			printf("\n");
 			getchar();
-		}*/
+		}
 		switch_bridge = cur_pos;
 		cur_pos = next_pos;
 		next_pos = switch_bridge;
