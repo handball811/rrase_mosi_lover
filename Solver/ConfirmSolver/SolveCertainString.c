@@ -18,7 +18,7 @@ void SolveCertainString(input_structure *inputStructure, middle_predict_structur
     usedPartsFlg = (int *)malloc(sizeof(int) * inputStructure->partsNum);
     for(int i = 0; i < inputStructure->partsNum; i++) {
         usedPartsFlg[i] = 0;
-    }
+    
  
     SortInputStructureParts(inputStructure);   
     InitializeMiddleStructure(inputStructure, middleStructure);                         // inputStructureの中身を元にmiddleStructureを初期化する。
@@ -28,4 +28,5 @@ void SolveCertainString(input_structure *inputStructure, middle_predict_structur
     UpdateUnsettledPlace(middleStructure);                                              // middleStructureのunsettledPlaceを更新する。
 
     CalculateCorrectAnswerRate("Data/dat1_ref", middleStructure->str, middleStructure->strLen);
+
 }
