@@ -18,15 +18,22 @@ void SolveCertainString(input_structure *inputStructure, middle_predict_structur
     usedPartsFlg = (int *)malloc(sizeof(int) * inputStructure->partsNum);
     for(int i = 0; i < inputStructure->partsNum; i++) {
         usedPartsFlg[i] = 0;
-    
+    }
  
     SortInputStructureParts(inputStructure);   
     InitializeMiddleStructure(inputStructure, middleStructure);                         // inputStructureの中身を元にmiddleStructureを初期化する。
     InsertConfirmParts(inputStructure, middleStructure, usedPartsFlg);                  // まず確実に当てはまる部分文字列を当てはめる。
+
+    CalculateCorrectAnswerRate("Data/dat2_ref", middleStructure->str, middleStructure->strLen);
+
     InsertPartsRoughly(inputStructure, middleStructure, usedPartsFlg);                  // 残りは一致する文字数が大きいところに挿入。
     PushUnusedPartsToMiddleStructure(inputStructure, middleStructure, usedPartsFlg);    // 当てはまらなかった部分文字列をMiddleStructureに移動。
     UpdateUnsettledPlace(middleStructure);                                              // middleStructureのunsettledPlaceを更新する。
 
-    CalculateCorrectAnswerRate("Data/dat1_ref", middleStructure->str, middleStructure->strLen);
-
+    for(int i=0;i<middleStructure->strLen;i++){
+        if(middleStructure->str[i] == 'x'){
+            middleStructure->str[i] = 'a';
+        }
+    }
+    CalculateCorrectAnswerRate("Data/dat2_ref", middleStructure->str, middleStructure->strLen);
 }
