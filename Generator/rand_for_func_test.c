@@ -8,8 +8,7 @@
 #include <stdlib.h>
 #define MAX 400001
 
-void QuestionGenerate(input_structure *in, output_structure *out)
-{
+void QuestionGenerate(input_structure *in, output_structure *out){
     int i, j, cal = 0, x, *num_rand, max = 0;
     int num_len[50000];
     double lamda = 0.0923;
@@ -363,4 +362,23 @@ void QuestionGenerate(input_structure *in, output_structure *out)
     in->partsNum = max;
     out->ans_len = MAX;
     /*partsは動的な配列なので後でfreeする必要がある*/
+}
+int main(void){
+    FILE *fp;
+    fp=fopen("randtest.txt","w");
+    int i;
+    input_structure in;
+    output_structure out;
+    QuestionGenerate(&in, &out);
+    for (i = 0; i < in.partsNum; i++){
+        fprintf(fp,"%s\n",in.parts[i]);
+        free(in.parts[i]);
+    }
+    fprintf(fp, "%s\n", out.ans);
+    fprintf(fp, "%s\n", in.str);
+    printf("out.ans_len:%d\n",out.ans_len);
+    printf("in.strLen:%d\n", in.strLen);
+    printf("in.partsNum:%d",in.partsNum);
+    free(in.parts);
+    fclose(fp);
 }
