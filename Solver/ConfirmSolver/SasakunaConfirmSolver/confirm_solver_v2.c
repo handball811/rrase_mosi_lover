@@ -4,9 +4,6 @@
 #include <math.h>
 #include "confirm_solver_v2.h"
 #include "../../../Modules/Stopwatch/stopwatch.h"
-
-// 何文字目スタートか、文字列の長さが2^i
-
 //
 char sc_str[400100];
 int sc_bef[400100] = {0};
@@ -19,6 +16,8 @@ int sc_used[400100] = {0};
 int sc_xsize[400100] = {0};
 int sc_str_len = 0;
 
+
+// 何文字目スタートか、文字列の長さが2^i
 void _merge_sort(int *index, int *nums, int *work, int size)
 {
 	if(size==1)
@@ -87,12 +86,14 @@ void merge_sort(char **strs, int str_len)
 void SCNodeInit(char *, const int, const int);
 void SCMatches(input_structure*,const int);
 
-void SCSolver(input_structure *input, const int do_merge_sort, const int show_debug)
+int* SCSolver(input_structure *input, middle_predict_structure *middle, const int do_merge_sort, const int show_debug)
 {
 	// input の値を変更する方針で変更していく。
 	// show_debugが付いて入れば時間を表示する。
 	// マージソートは適当絵そんなに早くないので市内設定も可能なようにしておく。
 	const int sc_size = 10;
+	strcpy(middle->str, input->str);
+	middle->strLen = input->strLen;
 	Stopwatch *st = GenerateStopwatch("SasakunaConfirm");
 	StopwatchLabel *st_init = GenerateStopwatchLabel(st, "init");
 	StopwatchLabel *st_main = GenerateStopwatchLabel(st, "main");
@@ -110,6 +111,67 @@ void SCSolver(input_structure *input, const int do_merge_sort, const int show_de
 	StopwatchStop(st);
 	if(show_debug)
 		StopwatchShow(st);
+	// middleの更新
+	strcpy(middle->strConsistOfParts, sc_str);
+	int i=0;
+	int z_start = 0;
+	int p_len_num[1024] = {0};
+	int p_len_max = 0;
+	while(sc_str[i] != '\0')
+	{
+		if(sc_used[i])
+		{
+			if(z_start)
+			{
+				++p_len_num[i-z_start];
+				if(i-z_start > p_len_max)
+					p_len_max = i-z_start;
+			}
+			z_start =0;
+		}
+		else
+		{
+			if(!z_start)
+				z_start = i;
+		}
+		++i;
+	}
+	printf("len: %d\n", p_len_max);
+	middle->maxPartsLen = p_len_max;
+	middle->parts = (char***)malloc(sizeof(char**)*(p_len_max+1));
+	middle->partsNum = (int*)malloc(sizeof(int)*(p_len_max+1));
+	for(i=0;i<p_len_max+1;++i)
+	{
+		if(!p_len_num[i])
+			continue;
+		middle->parts[i] = (char**)malloc(sizeof(char*)*(p_len_num[i]+1));
+		middle->partsNum[i] = p_len_num[i];
+		printf("Parts Num %d\n", middle->partsNum[i]);
+		p_len_num[i] = 0;
+	}
+	printf("p_lenset\n");
+	i = 0;
+	while(sc_str[i] != '\0')
+	{
+		if(sc_used[i])
+		{
+			if(z_start)
+			{
+				middle->parts[i-z_start][p_len_num[i-z_start]] = (char*)malloc(sizeof(char)*(i-z_start+1));
+				strncpy(middle->parts[i-z_start][p_len_num[i-z_start]], &sc_str[z_start], i-z_start+1);
+				middle->parts[i-z_start][p_len_num[i-z_start]][i-z_start] = '\0';
+				++p_len_num[i-z_start];
+			}
+			z_start =0;
+		}
+		else
+		{
+			if(!z_start)
+				z_start = i;
+		}
+		++i;
+	}
+	return &sc_used[0];
 }
 
 void SCNodeInit(char *str, const int sc_size, const int sc_used_init)
@@ -232,6 +294,8 @@ void SCMatches(
 	*/
 	const int mp_size = 1 << (sc_size);
 	const int STR_LEN_BORDER = 18;
+	const int immediate_border = sc_size+16;
+	int is_immediate;
 	char **strs = input->parts;
 	int strs_len = input->partsNum;
 	input->partsNum = 0;
@@ -314,11 +378,8 @@ void SCMatches(
 	StopwatchLabelStop(st_init);
 
 	/**/
-	int first_d;
 	while(cur_len)
 	{
-		first_d = 0;
-
 		printf("Cur Len %d\n", cur_len);
 		lasts_len = 0;
 		char title[] = "step0";
@@ -328,6 +389,7 @@ void SCMatches(
 		// 唯一のところが見つかったら当てはめる
 		// 当てはまらなかったら、lastsに追加
 		// Hashの構成を構築
+		int loop_len = 0;
 		for(i=0;i<cur_len;++i)
 		{
 			// ハッシュ構成の作成(余り多くなかったら記録するべきかな？)
@@ -345,7 +407,8 @@ void SCMatches(
 				f = a;
 				for(k=0;k<a;++k)
 				{
-					mp[f++] = mp[k]+hash;
+					mp[f] = mp[k]+hash;
+					++f;
 				}
 				a <<= 1;
 				b *= 5;
@@ -357,39 +420,60 @@ void SCMatches(
 			b = (int)set[0];
 			s_len = str_len[i];
 			e = s_len-1;
-			
+			is_immediate = (b == 1);
 			// 1024回＝＞2000回 * 6000~8000 = 1.6*10^7
 			//--a;
+			// ほとんどの処理時間はこのfor文章に割かれている。
+			// LOOPのうち5/6はans_cand_checkが入る
 			for(j=0;j<a;++j)
 			{
+				//d = sc_hash[mp[j]];
 				pos_pointer = sc_hash+mp[j];
 				d = *pos_pointer;
-
 				//最初から-1のものが半分から1/3
-				if(d==-1)
-					++first_d;
+				if(!(d+1))
+					continue;
 				while(d+1)
 				{
+					++loop_len;
 					if(sc_used[d])
 					{
 						if(sc_used[d+e])
 						{
 							c = d + sc_size;
-							for(k=1;k<b;++k)
+							// このforが重い？
+							if(is_immediate)
 							{
-								if((sc_pos[c]&set[k]) != set[k])
-									break;
-								c += 16;
-							}
-							if(k == b)
-							{
-								if(ans+1)
+								if((sc_pos[c]&set[1]) == set[1])
 								{
-									ans = -2;
-									break;
+									if(ans+1)
+									{
+										ans = -2;
+										break;
+									}
+									else
+										ans = d;
 								}
-								else
-									ans = d;
+							}
+							else
+							{
+								for(k=1;k<b;++k)
+								{
+									// ほぼ一回の検証で終わってる。
+									if((sc_pos[c]&set[k]) != set[k])
+										break;
+									c += 16;
+								}
+								if(k == b)
+								{
+									if(ans+1)
+									{
+										ans = -2;
+										break;
+									}
+									else
+										ans = d;
+								}
 							}
 						}
 						*pos_pointer = d;
@@ -421,7 +505,9 @@ void SCMatches(
 				++lasts_len;
 			}
 		}
-		printf("DSIZE %d\n", first_d);
+		//printf("LOOP LEN %d\n", loop_len);
+		//printf("ANS CAND %d\n", ans_cand_check);
+		//printf("ANS CAND LOOP %d\n", ans_cand_check_loop);
 		if(lasts_len == cur_len)
 			break;
 		cur_len = lasts_len;
