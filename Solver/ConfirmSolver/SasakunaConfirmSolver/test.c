@@ -3,9 +3,10 @@
 #include <string.h>
 //#include "confirm_solver.h"
 #include "confirm_solver_v2.h"
-
+#include "confirm_solver_v3.h"
 
 #include "../../../DataStructure/InputStructure/input_v1.h"
+#include "../../../DataStructure/MiddleStructure/middle_predict_v1.h"
 #include "../../../Generator/ReadDataFile.h"
 #include "../../../Modules/Stopwatch/stopwatch.h"
 /*
@@ -54,7 +55,6 @@ void show_result(input_structure *result, char *r_ans)
 			++ans;
 		if(ret[i] != r_ans[i] && ret[i] != 'x')
 			++wrong;
-
 		++i;
 	}
 	printf("Result: %lf %%(Wrong: %lf %%, Ex: %lf Wper: %lf)\n",
@@ -74,15 +74,20 @@ void test_v2()
 
 	char filename[] = "../../../../data/dat1_in";
 	input_structure inp;
+	middle_predict_structure md;
 	GetStructureFromFile(filename, &inp);
 
 
 	char ans_file[] = "../../../../data/dat1_ref";
 	FILE * fp = fopen(ans_file, "r");
 	fscanf(fp, "%s", r_ans);
-
+	int *used;
 	// この関数を呼ぶだけで良い
-	SCSolver(&inp, 1, 1);
+	used = SCSolver(&inp, &md, 1, 1);
+	int i,j,k;
+	show_result(&inp, r_ans);
+	SCSolverV3(&inp, used, r_ans);
+	printf("Solver 3\n");
 	show_result(&inp, r_ans);
 	return;
 }
