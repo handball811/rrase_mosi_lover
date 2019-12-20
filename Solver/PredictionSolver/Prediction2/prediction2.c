@@ -1,81 +1,151 @@
 #include "../../../DataStructure/MiddleStructure/middle_predict_v1.h"
 #include "../../../DataStructure/OutputStructure/output_v1.h"
+#include "../../ConfirmSolver/SolveCertainString.h"
+#include "../../ConfirmSolver/CalculateCorrectAnswerRate.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-output_structure prediction2(middle_predict_structure* predict){
-  int distribution[4][4] = {{3,0,2,1},{3,0,1,2},{1,1,0,1},{2,1,-1,0}};
-  output_structure output;
-  int predict_parts_len=0,answer=0,answer_part_len=0;
-  int parts_len; //各パーツの長さ
-  //確定していない部分を順に埋める
-  for(int i = 0;i < (*predict).predict_len;i+=2){
 
-    if( (*predict).predict[i] == 0){
+void q_sort(int** numbers, int left, int right)
+{
+    int pivot, l_hold, r_hold;
 
-    }else{
-      predict_parts_len = (*predict).predict[i+1]-(*predict).predict[i];//確定していない部分の長さ
-      answer = (*predict).range[0];
-      answer_part_len = (*predict).range[1]-(*predict).range[0];
-
-      for(int j = 0;j < (*predict).range_len-1;j++){ //各パーツを順に当てはめる
-        parts_len = (*predict).range[j+1]-(*predict).range[j];
-
-        if(parts_len > predict_parts_len){
-          continue;
-        }else{
-            for(int k = 0; k < parts_len;k++){
-              if((*predict).str[(*predict).predict[i+k]] != 'x'  &&  (*predict).str[(*predict).predict[i]+k] != (*predict).parts[(*predict).range[j]+k]){
-                //printf("break j=%d,k=%d, %c != %c\n",j,k,(*predict).str[(*predict).predict[i+k]],(*predict).parts[(*predict).range[j+k]]);
-                break;
-              }
-
-              if(k==0){
-                if(distribution[(*predict).str[(*predict).predict[i]-1] - 97][(*predict).parts[(*predict).range[j]] - 97] >
-                  distribution[(*predict).str[(*predict).predict[i]-1] - 97][(*predict).parts[answer] - 97] &&
-                  (*predict).str[(*predict).predict[i]] != (*predict).parts[(*predict).range[j+k]])
-                {
-                  answer = (*predict).range[j];
-                  answer_part_len = parts_len;
-                  //printf("k=0 %d\n",answer);
-                }
-              }else{
-                if(distribution[(*predict).parts[(*predict).range[j+k-1]] - 97][(*predict).parts[(*predict).range[j+k]] - 97] >
-                  distribution[(*predict).parts[(*predict).range[j+k-1]] - 97][(*predict).parts[answer+k] - 97 ])
-                {
-                  answer = (*predict).range[j];
-                  answer_part_len = parts_len;
-                  //printf("k=%d %d\n",k,answer);
-                  break;
-                }
-              }
-
-            }
-          }
-      }
+    l_hold = left;
+    r_hold = right;
+    pivot = numbers[left][0];
+    while (left < right)
+    {
+        while ((numbers[right][0] >= pivot) && (left < right))
+            right--;
+        if (left != right)
+        {
+            numbers[left][0] = numbers[right][0];
+            numbers[left][1] = numbers[right][1];
+            left++;
+        }
+        while ((numbers[left][0] <= pivot) && (left < right))
+            left++;
+        if (left != right)
+        {
+            numbers[right][0] = numbers[left][0];
+            numbers[right][1] = numbers[left][1];
+            right--;
+        }
     }
-    //答えの挿入、partsの更新
-    //answerはpartsに対するインデックス
-    if(((*predict).parts[answer]) != 'x'){
-      memcpy((*predict).str + (*predict).predict[i] , &((*predict).parts[answer]),(int)sizeof(char)*answer_part_len);
+    numbers[left][0] = pivot;
+    pivot = left;
+    left = l_hold;
+    right = r_hold;
+    if (left < pivot)
+        q_sort(numbers, left, pivot-1);
+    if (right > pivot)
+        q_sort(numbers, pivot+1, right);
+}
 
-      for(int l = 0; l < answer_part_len;l++){
-        (*predict).parts[answer+l] = 'x';
-      }
-      if(answer_part_len < predict_parts_len){
-        //printf("parts_len %d,%d\n",i,answer_part_len);
-        (*predict).predict[i] += answer_part_len;
-        i-=2;
-      }
-      //printf("%d %s %s\n",answer,(*predict).parts,(*predict).str);
+
+int** placeSort(int* unsettledPlace,int* len){
+  //配列確保
+  int i  = 0;
+  while(1){
+    if(unsettledPlace[i] == 0){
+      break;
     }
+    i++;
+  }
+  int parts_len = i/2;
+  *len = parts_len;
 
+  int** parts = (int**)malloc(sizeof(int**)*(unsigned long)(parts_len));
+
+  //空白の場所・大きさを代入
+  for(i = 0; i < parts_len ; i++){
+    parts[i] = (int*)malloc(sizeof(int*)*2);
+    parts[i][0] = unsettledPlace[i*2+1] - unsettledPlace[i*2];
+    parts[i][1] = unsettledPlace[i*2];
   }
 
-  strcpy(output.ans,(*predict).str);
-  output.ans_len = (*predict).str_len;
+  //並び替え
+  q_sort(parts,0,parts_len-1);
 
-  return output;
+  return parts;
+}
+
+void prediction2(middle_predict_structure* predict, output_structure* output){
+  int distribution[4][4] = {{3,0,2,1},{3,0,1,2},{1,1,0,1},{2,1,-1,0}};
+  int len = 0;
+  int answer[2] = {1,0},answer_part_len=1;
+
+  int** unsettledParts = placeSort(predict->unsettledPlace,&len);
+
+  //未確定の各場所を走査
+  for (int i = 0; i < len; i++){
+    //j文字の部分文字列を探索
+    for(int j = 1;j < predict->maxPartsLen+1;j++){
+
+      //対象の部分文字列が未確定部分より大きければ終了
+      if(j > unsettledParts[i][0]){
+        break;
+      }
+
+      //j文字の各部分文字列を探索
+      for(int k = 0;k < predict->partsNum[j];k++){
+          int flag = 0;
+          for(int l = 0;l < j;l++){
+            if( (predict->str[unsettledParts[i][1]+l] != 'x' && predict->str[unsettledParts[i][1]+l] != predict->parts[j][k][l] )  ||  predict->parts[j][k][l] == 'x' ){
+              flag = 1;
+              break;
+            }
+          }
+          if(flag == 1){continue;}
+
+          //もし答えよりも最初の文字が当てはまる確率が高いなら
+          if(( (distribution[predict->str[unsettledParts[i][1]-1]-97][predict->parts[j][k][0]-97] >
+              distribution[predict->str[unsettledParts[i][1]-1]-97][predict->parts[answer[0]][answer[1]][0]-97] ) && unsettledParts[i][1] != 0 )
+            || predict->parts[answer[0]][answer[1]][0] == 'x'){
+              answer[0] = j,answer[1] = k,answer_part_len=j;
+          //もし最初の文字が当てはまる確率が一緒で
+          }else if(distribution[predict->str[unsettledParts[i][1]-1]-97][predict->parts[j][k][0]-97] ==
+              distribution[predict->str[unsettledParts[i][1]-1]-97][predict->parts[answer[0]][answer[1]][0]-97]){
+              //現在参照している文字列がanswerより大きければ
+              if(j > answer[0]){
+                answer[0] = j,answer[1] = k,answer_part_len=j;
+              //文字列の長さが同じで次の文字がxでないなら
+            }else if(predict->str[unsettledParts[i][1]+j] != 'x' && j == unsettledParts[i][0]){
+                //最後の文字とその次の文字を比較
+                if(distribution[predict->parts[j][k][j-1]-97][predict->str[unsettledParts[i][1]]-97] >
+                    distribution[predict->parts[answer[0]][answer[1]][j-1]-97][predict->str[unsettledParts[i][1]]-97]){
+                      answer[0] = j,answer[1] = k,answer_part_len=j; printf("!");
+                }
+              }
+          }
+
+      }
+    }
+
+    if( strncmp(predict->parts[answer[0]][answer[1]],"x",1)){
+      //答えの挿入、partsの更新
+      memcpy(predict->str + unsettledParts[i][1] ,predict->parts[answer[0]][answer[1]],(int)sizeof(char)*answer_part_len);
+      //埋まった場所と使ったパーツの更新
+      predict->parts[answer[0]][answer[1]] = "x";
+      if(unsettledParts[i][0] > answer_part_len){
+        unsettledParts[i][0] -= answer_part_len;
+        unsettledParts[i][1] += answer_part_len;
+        i--;
+      }
+    }
+  }
+
+  CalculateCorrectAnswerRate("Data/dat1_ref",predict->str,predict->strLen);
+
+  for(int i=0;i<predict->strLen;i++){
+      if(predict->str[i] == 'x'){
+          predict->str[i] = 'a';
+      }
+  }
+
+  strcpy(output->ans,predict->str);
+  output->ans_len = predict->strLen;
 }
 
 //a->a,d,c,b
