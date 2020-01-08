@@ -43,9 +43,9 @@ int get_edit_distance(output_structure *ls, output_structure *rs){
         str1[i]=i;
     }  
     for(i=1;i<MAX;i++){
-        /*if(i%100==0){
+        if(i%1000==0){
             printf("%d\n",i);
-        }*/
+        }
         if(i%2!=0){
             for(j=0;j<MAX;j++){
                 if(j==0){
